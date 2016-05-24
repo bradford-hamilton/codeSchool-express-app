@@ -44,16 +44,12 @@ describe('Listing cities on /cities', function() {
   it ('Returns initial cities', function (done) {
     request(app)
       .get('/cities')
-      .expect(JSON.stringify(["Lotopia","Caspiana","Indigo","Springfield"]), done);
+      .expect(JSON.stringify([]), done);
   });
 
 });
 
 describe('Creating new cities', function() {
-
-  before(function() {
-
-  });
 
   it('Returns a 201 status code', function(done) {
     request(app)
@@ -68,6 +64,13 @@ describe('Creating new cities', function() {
       .send('name=Springfield&description=where+the+simpsons+live')
       .expect(/springfield/i, done);
   });
+
+  it('Validates city and description', function(done) {
+    request(app)
+      .post('/cities')
+      .send('name=&description=')
+      .expect(400, done);
+  });
 });
 
 describe('Deleting cities', function() {
@@ -75,7 +78,7 @@ describe('Deleting cities', function() {
   before(function() {
     client.hset('cities', 'Banana', 'a tasty fruit');
   });
-  
+
   after(function() {
     client.flushdb();
   });
