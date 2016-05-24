@@ -17,7 +17,6 @@ if (process.env.REDISTOGO_URL) {
   client.select((process.env.NODE_ENV || 'development').length);
 }
 
-
 // Route stuff
 app.get('/cities', function(request, response) {
   client.hkeys('cities', function(error, names) {
@@ -31,6 +30,13 @@ app.post('/cities', urlencode, function(request, response) {
   client.hset('cities', newCity.name, newCity.description, function(error) {
     if (error) throw error;
     response.status(201).json(newCity.name);
+  });
+});
+
+app.delete('/cities/:name', function(request, response) {
+  client.hdel('cities', request.params.name, function(error) {
+    if (error) throw error;
+    response.sendStatus(204);
   });
 });
 
